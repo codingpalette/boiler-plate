@@ -69,12 +69,24 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
 userSchema.methods.createToken = function (cb) {
   // jwt 토큰을 사용해서 토큰 생성
   let user = this;
-  console.log('aaa', user._id);
   const token = jwt.sign(user._id.toHexString(), 'jwtToken');
   user.token = token;
   user.save(function (err, user) {
     if (err) return cb(err);
     cb(null, user);
+  });
+};
+
+userSchema.statics.findByToken = function (token, cb) {
+  let user = this;
+  // 코큰을 디코드 한다
+  jwt.verify(token, 'jwtToken', function (err, decoded) {
+    // 유저 아이디를 이용해서 유저를 찾은 다음에
+    // 클라이언트에서 가져온 토큰과 데이터베이스에서 보관된 코튼이 일치하는지
+    user.findOne({ _id: decoded, token: token }, function (err, user) {
+      if (err) return cb(err);
+      cb(null, user);
+    });
   });
 };
 
