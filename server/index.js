@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 5000;
+
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const config = require('./config/key');
@@ -27,6 +27,10 @@ mongoose
   });
 
 app.get('/', (req, res) => res.send('Hello World!'));
+
+app.get('/api/hello', (req, res) => {
+  res.send('테스트');
+});
 
 app.post('/api/users/register', (req, res) => {
   const user = new User(req.body);
@@ -90,6 +94,8 @@ app.get('/api/users/logout', auth, (req, res) => {
     });
   });
 });
+
+const port = 5000;
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
